@@ -1,4 +1,5 @@
-{ mkDerivation, aeson, base, bytestring, http-conduit, stdenv, text
+{ mkDerivation, aeson, base, bytestring, containers, http-conduit
+, protolude, stdenv, text
 }:
 mkDerivation {
   pname = "books";
@@ -7,7 +8,7 @@ mkDerivation {
   isLibrary = false;
   isExecutable = true;
   executableHaskellDepends = [
-    aeson base bytestring http-conduit text
+    aeson base bytestring containers http-conduit protolude text
   ];
   license = stdenv.lib.licenses.gpl3;
 }
