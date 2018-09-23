@@ -58,15 +58,18 @@ openLibraryURL isbn
   = "https://openlibrary.org/api/books?format=json&jscmd=data&bibkeys=ISBN:" <> isbn
 
 
-getData :: ISBN -> IO B.ByteString
-getData isbn
-  = simpleHttp . unpack $ openLibraryURL isbn
+book
+  :: (ISBN -> B.ByteString -> Either Text Book)
+  -> (ISBN -> Text)
+  -> ISBN
+  -> IO (Either Text Book)
+book parseIt createUrl isbn
+  = fmap (parseIt isbn) . simpleHttp . unpack . createUrl $ isbn
 
 
 main :: IO ()
 main = do
- -- Get JSON data and decode it
- d <- (fromOpenLibrary "9780980200447" <$> getData "9780980200447") :: IO (Either Text Book)
+ d <- book fromOpenLibrary openLibraryURL "9780980200447"
  case d of
   Left err -> putStrLn err
   Right ps -> print ps
