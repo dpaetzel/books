@@ -13,10 +13,7 @@ import Protolude
 
 
 import Control.Applicative
-import Control.Arrow (left)
 import Control.Monad
-import Data.Aeson
-import Data.Aeson.Types
 import Data.Text
 import Data.Map
 import qualified Data.ByteString.Lazy as B
@@ -27,40 +24,11 @@ import Text.XML.Light.Proc
 import Text.XML.Light.Types
 
 
-import Author
+import Book
+import OpenLibrary
 
 
 apiKey :: Text
-
-
-type ISBN = Text
-
-
-data Book
-  = Book
-  { authors :: [Text]
-  , isbn :: ISBN
-  , title :: Text
-  , url :: Maybe Text
-  }
-  deriving (Show)
-
-
-openLibraryURL :: ISBN -> Text
-openLibraryURL isbn
-  = "https://openlibrary.org/api/books?format=json&jscmd=data&bibkeys=ISBN:" <> isbn
-
-
-fromOpenLibrary :: ISBN -> B.ByteString -> Either Text Book
-fromOpenLibrary isbn s
-  = left pack $ do
-    result <- eitherDecode s
-    flip parseEither result $ \obj -> do
-      obj' <- obj .: ("ISBN:" <> isbn)
-      authors <- obj' .: "authors"
-      title <- obj' .: "title"
-      url <- obj' .: "url"
-      return $ Book (name <$> authors) isbn title (Just url)
 
 
 goodreadsURL :: Text -> ISBN -> Text

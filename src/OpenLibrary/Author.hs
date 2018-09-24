@@ -2,7 +2,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 
 
-module Author where
+module OpenLibrary.Author where
 
 
 import Protolude
