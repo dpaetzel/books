@@ -18,6 +18,7 @@ import Control.Concurrent (threadDelay)
 import Data.Text
 import qualified Data.ByteString.Lazy as B
 import Network.HTTP.Conduit (simpleHttp)
+import System.IO (BufferMode(NoBuffering), hSetBuffering)
 
 
 import Book
@@ -45,15 +46,23 @@ fetchAll isbn
     threadDelay 1500000
     bookE <- fetch fromOpenLibrary openLibraryURL isbn
     case bookE of
-      Left err -> do
-        putStrLn ("OpenLibrary didn't work, trying Goodreads …" :: Text)
-        fetch fromGoodreads (goodreadsURL apiKey) isbn
+      Left _ -> fetch fromGoodreads (goodreadsURL apiKey) isbn
       Right b -> return . Right $ b
 
 
 main
   = do
-    b1 <- fetchAll isbn1
-    b2 <- fetchAll isbn2
-    print b1
-    print b2
+    (file : _) <- getArgs
+    contents <- readFile file
+    sequence $ fetchAndSave file <$> lines contents
+  where
+    fetchAndSave file isbn
+      = do
+        bookE <- fetchAll isbn
+        case bookE of
+          Left (err, isbn) ->
+            -- appendFile ("unidentified-" `mappend` file) $ isbn `mappend` "," `mappend` err `mappend` "\n"
+            hPutStrLn stderr $ isbn `mappend` "," `mappend` err
+          Right book -> do
+            hSetBuffering stdout NoBuffering
+            hPutStrLn stdout . csv $ book
