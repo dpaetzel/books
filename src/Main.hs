@@ -1,4 +1,3 @@
-{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE TupleSections #-}
@@ -39,7 +38,7 @@ fetch parseIt createUrl isbn
 fetchAll :: ISBN -> IO (Either (Text, ISBN) Book)
 fetchAll isbn
   = do
-    threadDelay 1500000
+    threadDelay 2000000
     bookE <- fetch fromOpenLibrary openLibraryURL isbn
     case bookE of
       Left _ -> fetch fromGoodreads (goodreadsURL apiKey) isbn
@@ -56,9 +55,8 @@ main
       = do
         bookE <- fetchAll isbn
         case bookE of
-          Left (err, isbn) ->
-            -- appendFile ("unidentified-" `mappend` file) $ isbn `mappend` "," `mappend` err `mappend` "\n"
-            hPutStrLn stderr $ isbn `mappend` "," `mappend` err
+          Left (_, isbn) ->
+            hPutStrLn stderr isbn
           Right book -> do
             hSetBuffering stdout NoBuffering
             hPutStrLn stdout . csv $ book
