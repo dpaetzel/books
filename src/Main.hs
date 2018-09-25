@@ -36,10 +36,6 @@ fetch parseIt createUrl isbn
   = fmap (left (, isbn) . parseIt isbn) . simpleHttp . unpack . createUrl $ isbn
 
 
-isbn1 = "9780980200447" :: Text
-isbn2 = "9783442472444" :: Text
-
-
 fetchAll :: ISBN -> IO (Either (Text, ISBN) Book)
 fetchAll isbn
   = do
