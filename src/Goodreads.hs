@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 
 module Goodreads where
@@ -37,7 +37,7 @@ fromGoodreads isbn s
   = do
     a <- author
     t <- title
-    return $ Book [a] isbn t Nothing
+    return $ Book [a] isbn t "goodreads"
   where
     authorQuery = QName "author" Nothing Nothing
     nameQuery = QName "name" Nothing Nothing

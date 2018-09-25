@@ -15,7 +15,7 @@ data Book
   { authors :: [Text]
   , isbn :: ISBN
   , title :: Text
-  , url :: Maybe Text
+  , source :: Text
   }
   deriving (Show)
 

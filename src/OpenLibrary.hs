@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 
 module OpenLibrary where
@@ -33,6 +33,5 @@ fromOpenLibrary isbn s
       obj' <- obj .: ("ISBN:" <> isbn)
       authors <- obj' .: "authors"
       title <- obj' .: "title"
-      url <- obj' .: "url"
-      return $ Book (name <$> authors) isbn title (Just url)
+      return $ Book (name <$> authors) isbn title "OpenLibrary"
 
