@@ -14,6 +14,7 @@ import Protolude
 
 
 import Control.Arrow (left)
+import Control.Concurrent (threadDelay)
 import Data.Text
 import qualified Data.ByteString.Lazy as B
 import Network.HTTP.Conduit (simpleHttp)
@@ -41,6 +42,7 @@ isbn2 = "9783442472444" :: Text
 fetchAll :: ISBN -> IO (Either (Text, ISBN) Book)
 fetchAll isbn
   = do
+    threadDelay 1500000
     bookE <- fetch fromOpenLibrary openLibraryURL isbn
     case bookE of
       Left err -> do
