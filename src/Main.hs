@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE TupleSections #-}
 
 
 -- https://www.schoolofhaskell.com/school/starting-with-haskell/libraries-and-frameworks/text-manipulation/json
@@ -12,6 +13,7 @@ module Main where
 import Protolude
 
 
+import Control.Arrow (left)
 import Data.Text
 import qualified Data.ByteString.Lazy as B
 import Network.HTTP.Conduit (simpleHttp)
@@ -27,16 +29,16 @@ fetch
   :: (ISBN -> B.ByteString -> Either Text Book)
   -> (ISBN -> Text)
   -> ISBN
-  -> IO (Either Text Book)
+  -> IO (Either (Text, ISBN) Book)
 fetch parseIt createUrl isbn
-  = fmap (parseIt isbn) . simpleHttp . unpack . createUrl $ isbn
+  = fmap (left (, isbn) . parseIt isbn) . simpleHttp . unpack . createUrl $ isbn
 
 
 isbn1 = "9780980200447" :: Text
 isbn2 = "9783442472444" :: Text
 
 
-fetchAll :: ISBN -> IO (Either Text Book)
+fetchAll :: ISBN -> IO (Either (Text, ISBN) Book)
 fetchAll isbn
   = do
     bookE <- fetch fromOpenLibrary openLibraryURL isbn
