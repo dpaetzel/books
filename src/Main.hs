@@ -24,6 +24,7 @@ import Book
 import Goodreads
 import Goodreads.APIKey
 import OpenLibrary
+import Abebooks
 
 
 fetch
@@ -39,10 +40,17 @@ fetchAll :: ISBN -> IO (Either (Text, ISBN) Book)
 fetchAll isbn
   = do
     threadDelay 2000000
-    bookE <- fetch fromOpenLibrary openLibraryURL isbn
-    case bookE of
-      Left _ -> fetch fromGoodreads (goodreadsURL apiKey) isbn
+    b <- fetch fromOpenLibrary openLibraryURL isbn
+    case b of
+      Left _ -> do
+        b <- fetch fromGoodreads (goodreadsURL apiKey) isbn
+        case b of
+          Left _ -> fetch fromAbebooks abebooksURL isbn
+          Right b -> return . Right $ b
       Right b -> return . Right $ b
+
+
+test = "9783442472444" :: Text
 
 
 main
